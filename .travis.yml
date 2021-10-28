@@ -1,0 +1,51 @@
+language: node_js
+node_js: stable
+
+# git 配置
+git:
+  depth: 1 # 配置git clone时的depth参数，代表clone多少个commit历史；
+  quiet: true # 配置git clone时是否显示正常日志，和-q参数作用一致；
+  submodules: false # 配置git clone时是否显示正常日志，和-q参数作用一致；
+  clone: false # 设置为false，阻止下载仓库；
+  autocrlf: input # autocrlf和设置core.autocrlf选项作用一致。
+
+# only代表白名单，只有它下面的分支会触发build；
+# except表示黑名单，此处的branch将不会触发build；
+branches:
+  only:
+    - main
+  except:
+    - dev
+
+# 指定缓存模块，可选。缓存可加快编译速度。
+cache:
+  directories:
+    - node_modules
+
+#安装hexo及插件
+install:
+  - npm install
+
+#清除 生成
+script:
+  - npm run build
+
+after_script:
+  - cd ./public
+  - git init
+  - git config user.name "wy"
+  - git config user.email "565971307@qq.com"
+  - git add .
+  - git commit -m "update"
+  - git push --force --quiet "https://${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}@${GH_REF}" master:master
+  #- git push --force --quiet "https://${GH_TOKEN}@${你得项目地址(如果源码跟发布的不在一个分支 这里是分发布用的分支地址)，不带https}" master:master
+#默认一个分支可以忽略此配置--监视github仓库中的master分支，分支出现变化就执行build
+#branches:
+#  only:
+#    - blogTS
+
+#build以后的地址
+# env:
+# global:
+# - GH_REF:
+#(分发布用的分支地址)  //讲道理 这个地方我还不太清楚有什么用 有知道的可以告诉我下
